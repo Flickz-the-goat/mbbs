@@ -16,7 +16,6 @@ private struct HollowTabs: View {
     @StateObject private var account = AccountModel()
     @State private var tab = Tab.account
     @State private var conversations: [UUID] = []
-    @State private var drafts: [FoodDraft] = []
 
     private enum Tab { case account, messages, power, food, blackout }
 
@@ -28,9 +27,10 @@ private struct HollowTabs: View {
             PowerView()
                 .tag(Tab.power)
                 .tabItem { Label("Power", systemImage: "bolt") }
-            NavigationStack {
-                FoodView(drafts: $drafts)
-            }
+            FoodView(
+                assignment: (account.user?.id ?? messaging.address).map(DemoFoodAssignment.init),
+                isGuest: account.user == nil
+            )
             .tag(Tab.food)
             .tabItem { Label("Food", systemImage: "shippingbox") }
             AccountView(model: account, deviceID: messaging.address) { id in

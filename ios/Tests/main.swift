@@ -18,6 +18,15 @@ precondition(FoodDraft(name: "Rice", quantity: "0", unit: .kilograms, locale: us
 precondition(FoodDraft(name: "Rice", quantity: "-2", unit: .kilograms, locale: us) == nil)
 precondition(FoodDraft(name: "Rice", quantity: "2abc", unit: .kilograms, locale: us) == nil)
 precondition(FoodDraft(name: " ", quantity: "2", unit: .kilograms, locale: us) == nil)
+let firstResident = UUID(uuidString: "00000000-0000-4000-8000-000000000000")!
+let secondResident = UUID(uuidString: "00000000-0000-4000-8000-000001020304")!
+let firstAssignment = DemoFoodAssignment(residentID: firstResident)
+let secondAssignment = DemoFoodAssignment(residentID: secondResident)
+precondition(firstAssignment == DemoFoodAssignment(residentID: firstResident))
+precondition(firstAssignment.pickupWindow != secondAssignment.pickupWindow)
+precondition(firstAssignment.riceKilograms != secondAssignment.riceKilograms)
+precondition(firstAssignment.beanCans != secondAssignment.beanCans)
+precondition((3...6).contains(secondAssignment.waterLiters))
 print("Hollow demo model checks passed.")
 
 let powerResponse = """

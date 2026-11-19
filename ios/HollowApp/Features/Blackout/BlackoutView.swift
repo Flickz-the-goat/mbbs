@@ -5,9 +5,6 @@ struct BlackoutView: View {
     let contacts: [ContactProfile]
 
     @AppStorage("hollow.blackout.reports.v1") private var reportData = Data()
-    @AppStorage("hollow.blackout.station.v1") private var closedStationName = ""
-    @AppStorage("hollow.blackout.updateTime.v1") private var updateTime = 0.0
-    @AppStorage("hollow.blackout.sharedStock.v1") private var sharedStock = 36
     @State private var level = Level.four
     @State private var station = PickupStation.north
     @State private var notice: String?
@@ -23,8 +20,6 @@ struct BlackoutView: View {
         case available(Level, PowerForecast)
         case missing(Level, String)
     }
-
-    private var closedStation: PickupStation? { PickupStation(rawValue: closedStationName) }
 
     private var recipients: [ContactProfile] {
         contacts.filter { $0.deviceId != messaging.address }
@@ -50,13 +45,9 @@ struct BlackoutView: View {
     }
 
     var body: some View {
-        Screen(title: "Blackout Mode", subtitle: "Check on family, share incidents, and plan ration pickups.") {
+        Screen(title: "Blackout Mode", subtitle: "Check on family and share incident reports.") {
             incidentBoard
             familyPanel
-            BlackoutRationsView(sharedStock: $sharedStock, closedStation: closedStation) { station in
-                closedStationName = station?.rawValue ?? ""
-                updateTime = Date.now.timeIntervalSince1970
-            }
         }
         .task(id: level) { await loadForecast(for: level) }
     }
@@ -76,19 +67,6 @@ struct BlackoutView: View {
                     .foregroundStyle(.orange)
             }
             forecastLine
-
-            if updateTime > 0 {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Coordinator update · Local simulation").font(.caption.weight(.semibold))
-                    if let closedStation {
-                        Text("\(closedStation.rawValue) closed. Pickup plan updated.")
-                    } else {
-                        Text("Both pickup stations are open. Pickup plan updated.")
-                    }
-                    Text(Date(timeIntervalSince1970: updateTime), format: .dateTime.month().day().hour().minute())
-                        .font(.caption).foregroundStyle(Palette.muted)
-                }
-            }
 
             ForEach(entries.prefix(8)) { entry in
                 VStack(alignment: .leading, spacing: 4) {

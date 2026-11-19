@@ -73,3 +73,24 @@ private extension Decimal {
         return result
     }
 }
+
+struct DemoFoodAssignment: Equatable {
+    private static let pickupWindows = [
+        "9:00–9:30 AM", "9:30–10:00 AM", "10:00–10:30 AM", "10:30–11:00 AM",
+        "1:00–1:30 PM", "1:30–2:00 PM", "2:00–2:30 PM", "2:30–3:00 PM",
+    ]
+
+    let pickupWindow: String
+    let riceKilograms: Int
+    let beanCans: Int
+    let waterLiters: Int
+
+    init(residentID: UUID) {
+        // Use separate UUID bytes to keep the demo values stable across launches.
+        let bytes = residentID.uuid
+        pickupWindow = Self.pickupWindows[Int(bytes.12) % Self.pickupWindows.count]
+        riceKilograms = 1 + Int(bytes.13) % 4
+        beanCans = 2 + Int(bytes.14) % 4
+        waterLiters = 3 + Int(bytes.15) % 4
+    }
+}

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>HollowAPIURL</key>
-    <string></string>
+    <string>http://MacBook-Air-156.local:8000</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsLocalNetworking</key>
