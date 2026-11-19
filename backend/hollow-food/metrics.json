@@ -1,0 +1,6 @@
+{
+  "training_rows": 2400,
+  "test_rows": 600,
+  "test_mae_ration_units": 2.884,
+  "warning": "Synthetic targets generated from a formula; this does not validate real-world food needs or nutrition."
+}

@@ -1,0 +1,1 @@
+"""Synthetic power outage forecasting."""

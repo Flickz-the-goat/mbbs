@@ -18,7 +18,7 @@ private struct HollowTabs: View {
     @State private var conversations: [UUID] = []
     @State private var drafts: [FoodDraft] = []
 
-    private enum Tab { case account, messages, power, food }
+    private enum Tab { case account, messages, power, food, blackout }
 
     var body: some View {
         TabView(selection: $tab) {
@@ -28,15 +28,20 @@ private struct HollowTabs: View {
             PowerView()
                 .tag(Tab.power)
                 .tabItem { Label("Power", systemImage: "bolt") }
-            FoodView(drafts: $drafts)
-                .tag(Tab.food)
-                .tabItem { Label("Food", systemImage: "shippingbox") }
+            NavigationStack {
+                FoodView(drafts: $drafts)
+            }
+            .tag(Tab.food)
+            .tabItem { Label("Food", systemImage: "shippingbox") }
             AccountView(model: account, deviceID: messaging.address) { id in
                 conversations = [id]
                 tab = .messages
             }
             .tag(Tab.account)
             .tabItem { Label("Account", systemImage: "person.crop.circle") }
+            BlackoutView(messaging: messaging, contacts: account.contacts)
+                .tag(Tab.blackout)
+                .tabItem { Label("Blackout", systemImage: "bolt.slash") }
         }
         .onOpenURL { url in
             guard url.scheme == "hollow-auth", url.host == "callback" else { return }

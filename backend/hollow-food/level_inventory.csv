@@ -1,0 +1,9 @@
+level_id,population,shared_ration_units,distribution_center_capacity_per_hour,pickup_open_hour,pickup_close_hour
+1,1501,567,58,9,17
+2,1610,541,45,9,17
+3,1378,303,58,9,17
+4,1388,225,28,9,17
+5,1528,492,35,9,17
+6,1451,211,49,9,17
+7,1620,130,21,9,17
+8,1512,352,26,9,17

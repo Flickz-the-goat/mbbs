@@ -24,6 +24,11 @@ struct FoodView: View {
                 }
                 .buttonStyle(.borderedProminent)
 
+                NavigationLink {
+                    FoodServerView(client: FoodAPIClient.configured)
+                } label: {
+                    Label("Food server demo", systemImage: "network")
+                }
 
                 Text("Add inventory").font(.headline).accessibilityAddTraits(.isHeader)
                 TextField("Food name", text: $name)

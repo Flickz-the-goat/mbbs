@@ -1,8 +1,10 @@
 # Hollow — Offline Survival Network
 
-**Status:** The SwiftUI prototype is in `ios/`. The Messages tab implements foreground Bluetooth messaging. The Account tab supports registration, sign-in, and username-based contacts directly through Supabase Auth and the Data API. Power and food integrations below describe planned work.
+**Status:** The SwiftUI prototype is in `ios/`. The Messages tab implements foreground Bluetooth messaging. The Account tab supports registration, sign-in, and username-based contacts directly through Supabase Auth and the Data API. The Food tab requests synthetic ration-demand predictions and shared stock allocations from the configured FastAPI server. The Power tab requests a 24-hour outage forecast for the selected level and shows the server's synthetic replay window.
 
-Bluetooth messaging and previously saved contacts work offline. Registration, sign-in, and contact lookup require a reachable backend. Messages and the device ID are stored locally across relaunches. Power shows sample 24-hour forecasts by level, and Food saves private drafts for the current session. Photo capture and review, live forecasts, and pickup assignments are pending.
+Bluetooth messaging and previously saved contacts work offline. Registration, sign-in, and contact lookup require a reachable backend. Messages and the device ID are stored locally across relaunches. Power can show labeled offline samples for levels 2 and 3 when the server forecast is unavailable. Food saves private drafts for the current session and shows a separate allocation simulation. Photo capture and review, live power telemetry, and pickup assignments are pending.
+
+The **Blackout** tab combines family check-ins, resident incident reports, and a local coordinator simulation. The coordinator simulation plans pickups for fictional households and shows ration shortages and waiting lists.
 
 Hollow is an **iPhone-first** survival coordination application for an underground civilization with unreliable power, scarce food, and disrupted connectivity. It combines (1) nearby device-to-device messaging, (2) level-specific power outage forecasting, and (3) food inventory, allocation, and pickup scheduling.
 
@@ -49,7 +51,7 @@ flowchart TD
     FastAPI --> DB[(PostgreSQL)]
 ```
 
-**Offline boundary:** BLE messaging works without internet or FastAPI. Prediction, vision review, and global allocation need access to a reachable FastAPI server unless a separately implemented local fallback exists. A Bluetooth peer link does **not** automatically provide HTTP connectivity to the Python server. Cached predictions, assignments, and submissions remain readable offline; pending writes synchronize once network access returns.
+**Offline boundary:** BLE messaging works without internet or FastAPI. The food server demo requires HTTP connectivity. Its prediction and allocation calls are on-demand calculations and can be retried when the server is reachable. Private drafts and the local allocation simulation work independently of the server. Caching, queued writes, vision review, and pickup assignments are planned.
 
 ## Features
 
@@ -64,13 +66,9 @@ The Messages tab lists saved contacts and existing conversations. Open a row to 
 
 ### 2. Predict power outages by underground level
 
-**Inputs:** level ID, timestamped electrical consumption/capacity, historical outage start/end times, recent load trends, hour/day, and optional population data.
+The backend uses timestamped electrical demand, capacity, and historical outage starts for synthetic levels 2–4. A scikit-learn histogram gradient boosting classifier estimates the probability of at least one outage starting in the 24 hours after the latest input reading. Its inputs include load relative to capacity, the recent change in that ratio, level, and time of day.
 
-**Output:** per-level probability of an outage in the next 24 hours, risk window, and optionally estimated duration (separate model). Avoid unsupported exact outage timestamps.
-
-**Pipeline:** import and validate historical data → time-aware features → chronological train/validation split → train scikit-learn classifier (start with histogram gradient boosting) → evaluate precision/recall and calibration → persist versioned model → serve inference via FastAPI.
-
-**Example:** `GET /api/v1/levels/{level_id}/power/forecast`.
+Use `GET /api/v1/levels/{level_id}/power/forecast` to replay the bundled sample, `POST` at that path to estimate risk from two submitted readings, and `GET /api/v1/power/model` for held-out evaluation. Model setup and request fields are in the [backend README](backend/hollow-food/README.md). Forecasts are synthetic demonstrations. Outage duration and exact start times are outside this model's output.
 
 ### 3. Food inventory and ration distribution
 
@@ -159,14 +157,25 @@ The iPhone account flow needs only Supabase HTTPS access. Existing accounts from
 
 The database regression checks in [db.tests.sql](db.tests.sql) can be run in the SQL Editor after applying the schema. The fixture rows are rolled back.
 
-### Optional Python backend tests
+### Food and power backend
 
-Run the existing FastAPI account tests locally with a temporary SQLite database.
+Run the FastAPI service locally with Python 3.11 or later. It runs independently of the iPhone app and Supabase.
 
 ```sh
-python -m pip install -r backend/requirements-dev.txt
-PYTHONPATH=backend python -m pytest -q backend/tests
+cd backend/hollow-food
+python -m pip install -r requirements.txt
+python -m power.train
+python -m unittest discover -s tests
+python -m uvicorn api:app --reload
 ```
+
+Open `http://127.0.0.1:8000/docs` for `POST /food/predict-demand` and `POST /food/allocate`. See the [food backend README](backend/hollow-food/README.md) for model regeneration and input limits.
+
+To connect the iPhone app, set `HollowAPIURL` in [Info.plist](ios/HollowApp/Info.plist) to the base URL, then rebuild and open **Power** or **Food → Food server demo**. Existing builds configured through `HollowFoodAPIURL` can retain that key as a fallback when `HollowAPIURL` is blank. Use `http://localhost:8000` for a simulator on the same Mac as the server. For a physical phone, use a reachable HTTPS endpoint with a trusted certificate, or run `python -m uvicorn api:app --host 0.0.0.0` on a trusted local network and use the server’s resolvable `.local` hostname, such as `http://hollow-host.local:8000`. Allow local network access if iOS prompts.
+
+Power displays the probability and dated forecast window from the server. The demo replays the latest bundled readings, so the displayed window is historical. Train the model before starting the server with the command above.
+
+Both forms start with fictional data. Prediction sends the household inputs, and allocation sends the entered demands and shared stock. Private inventory drafts stay on the device. Use the API with synthetic demo data.
 
 ### iPhone app (macOS required)
 
@@ -181,11 +190,24 @@ PYTHONPATH=backend python -m pytest -q backend/tests
 3. Turn off Wi-Fi and cellular data while keeping Bluetooth enabled. Send a short message and check that it appears on the recipient and becomes **Delivered** on the sender.
 4. For a physical relay check, use a third iPhone. Keep sender and recipient out of direct Bluetooth reach. Let the middle device receive from the sender, then take it into the recipient’s range. Return it to the sender’s range to forward the receipt. Keep the apps foregrounded throughout.
 
+### Blackout Mode demo
+
+1. Save the other resident as a contact on each phone while the network is available. Open **Blackout**, disable Wi-Fi and cellular data, and keep Bluetooth on and both apps in the foreground.
+2. Under **Family check-ins**, tap **I’m safe**, **Need supplies**, or **Can’t reach pickup**. The receiver sees the latest check-in and its time. The sender sees **Delivered** after the mesh acknowledgment arrives.
+3. Select Level 4 and report **Power out** and **Pickup station closed** for North station. The board shows resident reports separately from model estimates and local coordinator updates. Reports queue to saved contacts and remain available locally for 24 hours. Bluetooth reports are unverified.
+4. In **Ration allocation and pickup**, leave shared stock at 36 units and close North station. The planner redirects one household to Junction station and leaves two awaiting capacity. Compare allocated units, unmet demand, and pickup status for each household. Coordinator changes stay on the device and use fictional households. Closing a station in the simulation is a separate action from receiving a report.
+
 The Foundation-only checks run on a Mac with Swift command-line tools. The three-device transport in these checks is a simulation and exercises routing, queue reload, disconnect and reconnect, duplicate suppression, expiry, and acknowledgments.
 
 ```sh
 hollow_test_dir=$(mktemp -d)
-swiftc -module-cache-path "$hollow_test_dir/cache" ios/HollowApp/Models/DemoData.swift ios/HollowApp/Features/Messaging/MeshRouter.swift ios/Tests/main.swift -o "$hollow_test_dir/hollow-tests"
+swiftc -module-cache-path "$hollow_test_dir/cache" \
+  ios/HollowApp/Models/DemoData.swift \
+  ios/HollowApp/Features/Messaging/MeshRouter.swift \
+  ios/HollowApp/Networking/PowerAPIClient.swift \
+  ios/HollowApp/Features/Blackout/BlackoutMessages.swift \
+  ios/HollowApp/Features/Blackout/BlackoutPlanner.swift \
+  ios/Tests/main.swift -o "$hollow_test_dir/hollow-tests"
 "$hollow_test_dir/hollow-tests"
 ```
 

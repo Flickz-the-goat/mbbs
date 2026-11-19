@@ -20,6 +20,28 @@ precondition(FoodDraft(name: "Rice", quantity: "2abc", unit: .kilograms, locale:
 precondition(FoodDraft(name: " ", quantity: "2", unit: .kilograms, locale: us) == nil)
 print("Hollow demo model checks passed.")
 
+let powerResponse = """
+{
+  "level_id": 3,
+  "probability": 0.428,
+  "window_start": "2025-03-01T18:00:00Z",
+  "window_end": "2025-03-02T18:00:00+00:00",
+  "generated_at": "2026-11-19T22:20:00.123456Z",
+  "reading_source": "synthetic_replay",
+  "model": {"version": "outage-v1-test", "trained_on": "synthetic"}
+}
+"""
+let decodedPower = try PowerForecast.decode(Data(powerResponse.utf8), for: 3)
+precondition(decodedPower.probability == 0.428)
+precondition(decodedPower.readingSource == .syntheticReplay)
+precondition(decodedPower.windowEnd.timeIntervalSince(decodedPower.windowStart) == 86_400)
+precondition(decodedPower.generatedAt > decodedPower.windowEnd)
+precondition(decodedPower.model.version == "outage-v1-test")
+precondition((try? PowerForecast.decode(Data(powerResponse.utf8), for: 4)) == nil)
+let invalidPower = powerResponse.replacingOccurrences(of: "0.428", with: "1.428")
+precondition((try? PowerForecast.decode(Data(invalidPower.utf8), for: 3)) == nil)
+print("Hollow power forecast decoding checks passed.")
+
 // Each simulated device stores a serialized copy, and links can be stopped and recreated.
 final class SimulatedDevice: PeerTransport {
     var onReceive: ((Data) -> Bool)?
@@ -171,3 +193,56 @@ try legacy.receive(JSONEncoder().encode(legacyPacket))
 precondition(legacy.outgoing().first?.version == 1)
 precondition(legacy.outgoing().first?.ttl == 4)
 print("Hollow twelve-link relay and legacy protocol checks passed.")
+
+let reporter = SimulatedDevice()
+let courier = SimulatedDevice()
+let relative = SimulatedDevice()
+let stationReport = BlackoutReport(id: UUID(), kind: .stationClosed, level: 4, station: .north, date: .now)
+try reporter.send(FamilyCheckIn.safe.message, to: relative.address)
+try reporter.send(stationReport.message, to: relative.address)
+let checkInPacket = reporter.router.outgoing().first!
+precondition(!reporter.router.isDelivered(checkInPacket))
+reporter.start()
+courier.start()
+reporter.update(reporter.router.outgoing())
+try reporter.transfer(to: courier)
+precondition(!reporter.router.isDelivered(checkInPacket))
+relative.start()
+courier.update(courier.router.outgoing())
+try courier.transfer(to: relative)
+precondition(relative.router.state.packets.filter { FamilyCheckIn.read($0.payload) == .safe }.count == 1)
+precondition(relative.router.state.packets.compactMap(BlackoutReport.read).map(\.id) == [stationReport.id])
+relative.update(relative.router.outgoing())
+try relative.transfer(to: courier)
+courier.update(courier.router.outgoing())
+try courier.transfer(to: reporter)
+precondition(reporter.router.isDelivered(checkInPacket))
+precondition(FamilyCheckIn.read("I’m safe") == nil)
+let badReport = MeshPacket(id: UUID(), origin: reporter.address, destination: relative.address, createdAt: .now,
+                           payload: stationReport.message.replacingOccurrences(of: " | 4 | ", with: " | 2 | "),
+                           acknowledging: nil)
+precondition(BlackoutReport.read(badReport) == nil)
+
+for stock in 0...80 {
+    let normal = BlackoutPlanner.plan(sharedStock: stock, closed: nil)
+    let demand = normal.reduce(0) { $0 + $1.household.demand }
+    for station in PickupStation.allCases {
+        let closed = BlackoutPlanner.plan(sharedStock: stock, closed: station)
+        precondition(closed.reduce(0) { $0 + $1.allocated } == min(stock, demand))
+        var pickups: [BlackoutPlanner.Pickup: Int] = [:]
+        for (before, after) in zip(normal, closed) {
+            precondition(before.allocated == after.allocated && after.unmet >= 0)
+            if before.pickup?.station != station { precondition(before.pickup == after.pickup) }
+            if let pickup = after.pickup {
+                precondition(pickup.station != station && after.allocated > 0)
+                precondition(after.household.availableWindows.contains(pickup.window))
+                pickups[pickup, default: 0] += 1
+            }
+        }
+        precondition(pickups.allSatisfy { pick, count in count <= BlackoutPlanner.capacity(of: pick) })
+    }
+}
+let disrupted = BlackoutPlanner.plan(sharedStock: 36, closed: .north)
+precondition(disrupted.contains { $0.pickup != nil && $0.pickup != $0.original })
+precondition(disrupted.contains { $0.allocated > 0 && $0.pickup == nil })
+print("Hollow blackout check-in, incident, and ration planning checks passed.")

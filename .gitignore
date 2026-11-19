@@ -2,3 +2,4 @@
 .venv/
 __pycache__/
 .pytest_cache/
+/backend/hollow-food/power/outage_model.pkl

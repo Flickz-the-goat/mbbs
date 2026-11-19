@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0000000000000000000B7535 /* BlackoutMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7535 /* BlackoutMessages.swift */; };
+		0000000000000000000B7536 /* BlackoutPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7536 /* BlackoutPlanner.swift */; };
+		0000000000000000000B7537 /* BlackoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7537 /* BlackoutView.swift */; };
+		0000000000000000000B7538 /* BlackoutRationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7538 /* BlackoutRationsView.swift */; };
+		0000000000000000000B7533 /* BackendConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7533 /* BackendConfiguration.swift */; };
+		0000000000000000000B7534 /* PowerAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7534 /* PowerAPIClient.swift */; };
+		0000000000000000000B7531 /* FoodAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7531 /* FoodAPIClient.swift */; };
+		0000000000000000000B7532 /* FoodServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7532 /* FoodServerView.swift */; };
 		0000000000000000000000C8 /* HollowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000064 /* HollowApp.swift */; };
 		0000000000000000000000C9 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000065 /* Screen.swift */; };
 		0000000000000000000000CA /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000066 /* FoodView.swift */; };
@@ -24,6 +32,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0000000000000000000A7535 /* BlackoutMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlackoutMessages.swift; path = HollowApp/Features/Blackout/BlackoutMessages.swift; sourceTree = "<group>"; };
+		0000000000000000000A7536 /* BlackoutPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlackoutPlanner.swift; path = HollowApp/Features/Blackout/BlackoutPlanner.swift; sourceTree = "<group>"; };
+		0000000000000000000A7537 /* BlackoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlackoutView.swift; path = HollowApp/Features/Blackout/BlackoutView.swift; sourceTree = "<group>"; };
+		0000000000000000000A7538 /* BlackoutRationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BlackoutRationsView.swift; path = HollowApp/Features/Blackout/BlackoutRationsView.swift; sourceTree = "<group>"; };
+		0000000000000000000A7533 /* BackendConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BackendConfiguration.swift; path = HollowApp/Networking/BackendConfiguration.swift; sourceTree = "<group>"; };
+		0000000000000000000A7534 /* PowerAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PowerAPIClient.swift; path = HollowApp/Networking/PowerAPIClient.swift; sourceTree = "<group>"; };
+		0000000000000000000A7531 /* FoodAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FoodAPIClient.swift; path = HollowApp/Networking/FoodAPIClient.swift; sourceTree = "<group>"; };
+		0000000000000000000A7532 /* FoodServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FoodServerView.swift; path = HollowApp/Features/Food/FoodServerView.swift; sourceTree = "<group>"; };
 		000000000000000000000005 /* Hollow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hollow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000064 /* HollowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HollowApp.swift; path = HollowApp/App/HollowApp.swift; sourceTree = "<group>"; };
 		000000000000000000000065 /* Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Screen.swift; path = HollowApp/App/Screen.swift; sourceTree = "<group>"; };
@@ -57,6 +73,14 @@
 			children = (
 				61FCB1D430AF7F7400BA2BAD /* FoodAllocation.swift */,
 				61FCB1D530AF7F7400BA2BAD /* FoodDistributionView.swift */,
+				0000000000000000000A7531 /* FoodAPIClient.swift */,
+				0000000000000000000A7532 /* FoodServerView.swift */,
+				0000000000000000000A7533 /* BackendConfiguration.swift */,
+				0000000000000000000A7534 /* PowerAPIClient.swift */,
+				0000000000000000000A7535 /* BlackoutMessages.swift */,
+				0000000000000000000A7536 /* BlackoutPlanner.swift */,
+				0000000000000000000A7537 /* BlackoutView.swift */,
+				0000000000000000000A7538 /* BlackoutRationsView.swift */,
 				000000000000000000000064 /* HollowApp.swift */,
 				000000000000000000000065 /* Screen.swift */,
 				000000000000000000000066 /* FoodView.swift */,
@@ -151,6 +175,14 @@
 				61FCB1D630AF7F7400BA2BAD /* FoodDistributionView.swift in Sources */,
 				61FCB1D730AF7F7400BA2BAD /* FoodAllocation.swift in Sources */,
 				0000000000000000000000CA /* FoodView.swift in Sources */,
+				0000000000000000000B7531 /* FoodAPIClient.swift in Sources */,
+				0000000000000000000B7532 /* FoodServerView.swift in Sources */,
+				0000000000000000000B7533 /* BackendConfiguration.swift in Sources */,
+				0000000000000000000B7534 /* PowerAPIClient.swift in Sources */,
+				0000000000000000000B7535 /* BlackoutMessages.swift in Sources */,
+				0000000000000000000B7536 /* BlackoutPlanner.swift in Sources */,
+				0000000000000000000B7537 /* BlackoutView.swift in Sources */,
+				0000000000000000000B7538 /* BlackoutRationsView.swift in Sources */,
 				0000000000000000000000CB /* MessagingView.swift in Sources */,
 				0000000000000000000B7430 /* MessagingModel.swift in Sources */,
 				0000000000000000000B752F /* AccountView.swift in Sources */,
