@@ -1,6 +1,8 @@
 # Hollow — Offline Survival Network
 
-**Status:** Proposed one-week hackathon prototype; features below are specifications, not claims of completed functionality.
+**Status:** The SwiftUI prototype is in `ios/`. The Messages tab implements foreground Bluetooth messaging. The Account tab supports registration, sign-in, and username-based contacts through a FastAPI backend backed by PostgreSQL on Supabase. Power and food integrations below describe planned work.
+
+Bluetooth messaging and previously saved contacts work offline. Registration, sign-in, and contact lookup require a reachable backend. Messages and the device ID are stored locally across relaunches. Power shows sample 24-hour forecasts by level, and Food saves private drafts for the current session. Photo capture and review, live forecasts, and pickup assignments are pending.
 
 Hollow is an **iPhone-first** survival coordination application for an underground civilization with unreliable power, scarce food, and disrupted connectivity. It combines (1) nearby device-to-device messaging, (2) level-specific power outage forecasting, and (3) food inventory, allocation, and pickup scheduling.
 
@@ -11,9 +13,9 @@ Hollow is an **iPhone-first** survival coordination application for an undergrou
 | iPhone UI | **Swift 5+ and SwiftUI** |
 | Device-to-device transport | **CoreBluetooth** (`CBCentralManager`, `CBPeripheralManager`, GATT services/characteristics) |
 | Routing | Custom Swift store-and-forward mesh protocol |
-| Local storage | SwiftData or SQLite; choose one during implementation |
+| Local storage | SwiftData for the message history, relay queue, and device ID |
 | Backend HTTP API | **Python 3.11+ / FastAPI / Pydantic** |
-| Database | PostgreSQL + SQLAlchemy + Alembic |
+| Database | Supabase-hosted PostgreSQL + SQLAlchemy + Alembic |
 | Outage forecasting | pandas, NumPy, scikit-learn |
 | Food allocation | Python, SciPy optimization |
 | Photo review | Vision-capable model accessed by FastAPI; human review for uncertainty |
@@ -50,14 +52,10 @@ flowchart TD
 
 ### 1. Nearby messaging
 
-- Advertise a custom BLE service UUID and scan for participating iPhones.
-- Exchange short messages using a GATT service with characteristics for sending and receiving.
-- Route messages over intermediate peers using store-and-forward flooding for the prototype.
-- Every message includes `id`, `originId`, `destinationId`, `createdAt`, `ttl`, `hopCount`, and `payload`.
-- Deduplicate received IDs, decrement TTL, persist undelivered messages, and retry on peer discovery.
-- Show `queued`, `sent_to_peer`, and `delivered` separately; end-to-end delivery requires a destination acknowledgment.
-- Define payload-size limits and chunk/reassemble larger messages; avoid transmitting images over the first BLE prototype.
-- Do not promise always-on mesh behavior: iOS limits background scanning, advertising, and execution. Demo with app foregrounded on **at least three physical iPhones** for a true two-hop test. One iPhone supports only partial local testing.
+- Each foreground iPhone advertises and scans. Peers write chunks with an ATT response to service `742D0001-CCB4-4D28-AE1E-0AA2AAEBE301`, characteristic `742D0002-CCB4-4D28-AE1E-0AA2AAEBE301`. A one-byte flags header marks the first and last chunks. The assembled Codable JSON packet is limited to 4 KiB, with text capped at 240 characters and 960 UTF-8 bytes.
+- Messages and acknowledgments have a version, unique ID, origin, destination, creation time, remaining hop allowance, and hop count. Relays store and forward packets that are under 24 hours old and have hops remaining. New packets can cross up to twelve links. Install the updated build on all devices in the relay chain. The updated app can still relay legacy four-link packets. Duplicate messages display once.
+- SwiftData stores the on-device history, received acknowledgments, and pending packets. **Queued** means the message is waiting for a peer. **Sent to peer** reflects an accepted Bluetooth write during the current run. **Delivered** requires an acknowledgment addressed to the sender from the destination ID. **Expired** means the forwarding window elapsed without a receipt.
+- A device ID is an address. The prototype uses plaintext and has no cryptographic identity verification, so use demo text only.
 
 ### 2. Predict power outages by underground level
 
@@ -138,30 +136,56 @@ hollow/
 │   └── requirements.txt
 ├── data/sample/                 # Synthetic demo data only
 ├── AGENTS.md
-└── READ.md
+└── README.md
 ```
 
 ## Local development
 
-### Backend (Windows or macOS)
+### Account backend with Supabase
 
-```powershell
-cd backend
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+1. In your Supabase project, open **Connect** and copy the **Session Pooler** PostgreSQL URI. Set it as `DATABASE_URL` in the root `.env`. Use the `postgresql+psycopg://` scheme, URL-encode the password, and include `?sslmode=require`. The local `.env` is ignored by Git. Use the tracked [example](.env.example) for a fresh checkout.
+2. From the repository root, install dependencies, run the schema migration, and start the API. These commands use macOS shell syntax.
+
+   ```sh
+   python3 -m venv .venv
+   source .venv/bin/activate
+   python -m pip install -r backend/requirements.txt
+   alembic -c backend/alembic.ini upgrade head
+   uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
+   ```
+3. An iPhone simulator on the same Mac can use `http://localhost:8000`. To share the backend across physical phones, deploy FastAPI behind a reachable HTTPS URL and set the same `DATABASE_URL` in the host environment. Run the migration against that database, and enter the same FastAPI URL on each phone. The iOS app connects to FastAPI. Supabase database credentials stay on the backend.
+4. In the **Account** tab choose **Create an account** and enter a username, name, password of at least eight characters, and Hollow level. Hollow fills in its local Bluetooth device ID. Each account is currently tied to a single device ID, so create separate accounts for separate phones. Passwords are stored as salted hashes.
+5. Enter another resident’s username under **Contacts**, then tap the saved contact to address a Bluetooth message. Saved contacts remain available offline on the signed-in phone. Registration and updating contacts require HTTP access to FastAPI.
+
+The migration creates `hollow_users`, `hollow_sessions`, and `hollow_contacts` with PostgreSQL row-level security enabled. The backend connects with the database owner role for this prototype. The app does not use Supabase Auth or keep a Supabase credential.
+
+Run account API tests locally with a temporary SQLite database.
+
+```sh
+python -m pip install -r backend/requirements-dev.txt
+PYTHONPATH=backend python -m pytest -q backend/tests
 ```
-
-Commands assume the backend files have been created. Keep secrets and database credentials in environment variables. Open `http://localhost:8000/docs` for FastAPI's generated API documentation.
 
 ### iPhone app (macOS required)
 
-1. Install Xcode on a Mac, create/open the SwiftUI iOS project, and configure signing.
-2. Add Bluetooth usage descriptions and required capabilities to the iOS target; request only necessary permissions.
-3. Connect a physical iPhone and run the app from Xcode.
-4. For FastAPI testing, connect the phone and backend computer to the same reachable network and configure the API base URL to the computer's LAN IP. `localhost` on an iPhone refers to the iPhone, not the Windows computer. Use HTTPS for deployment; development HTTP may require a narrowly scoped App Transport Security exception.
-5. Keep BLE messaging independent of backend availability.
+1. On a Mac with Xcode 15 or later, open [Hollow.xcodeproj](ios/Hollow.xcodeproj).
+2. Select the **Hollow** scheme and an iPhone simulator running iOS 17 or later. Press Run.
+3. For a physical iPhone, select a development team under **Signing & Capabilities**, select the phone as the run destination, then press Run.
+
+### Bluetooth demo
+
+1. Install the app on two physical iPhones, grant Bluetooth permission, and keep both apps in the foreground.
+2. Open **Messages** on each phone. Copy or share the recipient’s device ID and paste it into the sender’s **Recipient device ID** field.
+3. Turn off Wi-Fi and cellular data while keeping Bluetooth enabled. Send a short message and check that it appears on the recipient and becomes **Delivered** on the sender.
+4. For a physical relay check, use a third iPhone. Keep sender and recipient out of direct Bluetooth reach. Let the middle device receive from the sender, then take it into the recipient’s range. Return it to the sender’s range to forward the receipt. Keep the apps foregrounded throughout.
+
+The Foundation-only checks run on a Mac with Swift command-line tools. The three-device transport in these checks is a simulation and exercises routing, queue reload, disconnect and reconnect, duplicate suppression, expiry, and acknowledgments.
+
+```sh
+hollow_test_dir=$(mktemp -d)
+swiftc -module-cache-path "$hollow_test_dir/cache" ios/HollowApp/Models/DemoData.swift ios/HollowApp/Features/Messaging/MeshRouter.swift ios/Tests/main.swift -o "$hollow_test_dir/hollow-tests"
+"$hollow_test_dir/hollow-tests"
+```
 
 ## Seven-day hackathon scope
 

@@ -12,9 +12,6 @@ This document governs automated coding work on **Hollow**, an iPhone-first hacka
 - **Do not add React Native, Expo, JavaScript, or a third-party Bluetooth service** unless the user explicitly changes the stack.
 
 ## Environment constraints
-
-- The primary developer uses **Windows and an iPhone**. Backend code and tests must run on Windows.
-- Native SwiftUI iOS compilation requires **macOS/Xcode**; do not claim it builds directly on Windows.
 - CoreBluetooth has no usage subscription, but native iOS signing and distribution may have Apple account requirements.
 - Do not assume more than one physical iPhone is available. Provide simulator/mock transport for routing tests; clearly distinguish simulation from real BLE testing.
 

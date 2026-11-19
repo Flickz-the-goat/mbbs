@@ -1,0 +1,242 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0000000000000000000000C8 /* HollowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000064 /* HollowApp.swift */; };
+		0000000000000000000000C9 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000065 /* Screen.swift */; };
+		0000000000000000000000CA /* FoodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000066 /* FoodView.swift */; };
+		0000000000000000000000CB /* MessagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000067 /* MessagingView.swift */; };
+		0000000000000000000000CC /* PowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000068 /* PowerView.swift */; };
+		0000000000000000000000CD /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000069 /* DemoData.swift */; };
+		61FCB1D630AF7F7400BA2BAD /* FoodDistributionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FCB1D530AF7F7400BA2BAD /* FoodDistributionView.swift */; };
+		61FCB1D730AF7F7400BA2BAD /* FoodAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FCB1D430AF7F7400BA2BAD /* FoodAllocation.swift */; };
+		0000000000000000000B742E /* MeshRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A742E; };
+		0000000000000000000B742F /* BluetoothTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A742F; };
+		0000000000000000000B7430 /* MessagingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7430; };
+		0000000000000000000B752E /* AccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A752E; };
+		0000000000000000000B752F /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A752F; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		000000000000000000000005 /* Hollow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hollow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000064 /* HollowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HollowApp.swift; path = HollowApp/App/HollowApp.swift; sourceTree = "<group>"; };
+		000000000000000000000065 /* Screen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Screen.swift; path = HollowApp/App/Screen.swift; sourceTree = "<group>"; };
+		000000000000000000000066 /* FoodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FoodView.swift; path = HollowApp/Features/Food/FoodView.swift; sourceTree = "<group>"; };
+		000000000000000000000067 /* MessagingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessagingView.swift; path = HollowApp/Features/Messaging/MessagingView.swift; sourceTree = "<group>"; };
+		000000000000000000000068 /* PowerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PowerView.swift; path = HollowApp/Features/Power/PowerView.swift; sourceTree = "<group>"; };
+		000000000000000000000069 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DemoData.swift; path = HollowApp/Models/DemoData.swift; sourceTree = "<group>"; };
+		61FCB1D430AF7F7400BA2BAD /* FoodAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodAllocation.swift; sourceTree = "<group>"; };
+		61FCB1D530AF7F7400BA2BAD /* FoodDistributionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodDistributionView.swift; sourceTree = "<group>"; };
+		0000000000000000000A742E /* MeshRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshRouter.swift; path = HollowApp/Features/Messaging/MeshRouter.swift; sourceTree = "<group>"; };
+		0000000000000000000A742F /* BluetoothTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BluetoothTransport.swift; path = HollowApp/Features/Messaging/BluetoothTransport.swift; sourceTree = "<group>"; };
+		0000000000000000000A7430 /* MessagingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessagingModel.swift; path = HollowApp/Features/Messaging/MessagingModel.swift; sourceTree = "<group>"; };
+		0000000000000000000A752E /* AccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountModel.swift; path = HollowApp/Features/Accounts/AccountModel.swift; sourceTree = "<group>"; };
+		0000000000000000000A752F /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountView.swift; path = HollowApp/Features/Accounts/AccountView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		000000000000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		000000000000000000000003 = {
+			isa = PBXGroup;
+			children = (
+				61FCB1D430AF7F7400BA2BAD /* FoodAllocation.swift */,
+				61FCB1D530AF7F7400BA2BAD /* FoodDistributionView.swift */,
+				000000000000000000000064 /* HollowApp.swift */,
+				000000000000000000000065 /* Screen.swift */,
+				000000000000000000000066 /* FoodView.swift */,
+				000000000000000000000067 /* MessagingView.swift */,
+				0000000000000000000A7430 /* MessagingModel.swift */,
+				0000000000000000000A752F /* AccountView.swift */,
+				0000000000000000000A752E /* AccountModel.swift */,
+				0000000000000000000A742F /* BluetoothTransport.swift */,
+				0000000000000000000A742E /* MeshRouter.swift */,
+				000000000000000000000068 /* PowerView.swift */,
+				000000000000000000000069 /* DemoData.swift */,
+				000000000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		000000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000005 /* Hollow.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		000000000000000000000002 /* Hollow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00000000000000000000000A /* Build configuration list for PBXNativeTarget "Hollow" */;
+			buildPhases = (
+				000000000000000000000006 /* Sources */,
+				000000000000000000000007 /* Frameworks */,
+				000000000000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Hollow;
+			productName = Hollow;
+			productReference = 000000000000000000000005 /* Hollow.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		000000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+			};
+			buildConfigurationList = 000000000000000000000009 /* Build configuration list for PBXProject "Hollow" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 000000000000000000000003;
+			productRefGroup = 000000000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				000000000000000000000002 /* Hollow */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		000000000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		000000000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0000000000000000000000C8 /* HollowApp.swift in Sources */,
+				0000000000000000000000C9 /* Screen.swift in Sources */,
+				61FCB1D630AF7F7400BA2BAD /* FoodDistributionView.swift in Sources */,
+				61FCB1D730AF7F7400BA2BAD /* FoodAllocation.swift in Sources */,
+				0000000000000000000000CA /* FoodView.swift in Sources */,
+				0000000000000000000000CB /* MessagingView.swift in Sources */,
+				0000000000000000000B7430 /* MessagingModel.swift in Sources */,
+				0000000000000000000B752F /* AccountView.swift in Sources */,
+				0000000000000000000B752E /* AccountModel.swift in Sources */,
+				0000000000000000000B742F /* BluetoothTransport.swift in Sources */,
+				0000000000000000000B742E /* MeshRouter.swift in Sources */,
+				0000000000000000000000CC /* PowerView.swift in Sources */,
+				0000000000000000000000CD /* DemoData.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		00000000000000000000000B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		00000000000000000000000C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		00000000000000000000000D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4DU7V946T5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HollowApp/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Hollow uses Bluetooth to exchange nearby messages without internet.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.hollow.prototype781;
+				PRODUCT_NAME = Hollow;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		00000000000000000000000E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4DU7V946T5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HollowApp/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Hollow uses Bluetooth to exchange nearby messages without internet.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.hollow.prototype781;
+				PRODUCT_NAME = Hollow;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		000000000000000000000009 /* Build configuration list for PBXProject "Hollow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00000000000000000000000B /* Debug */,
+				00000000000000000000000C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		00000000000000000000000A /* Build configuration list for PBXNativeTarget "Hollow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00000000000000000000000D /* Debug */,
+				00000000000000000000000E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 000000000000000000000001 /* Project object */;
+}
