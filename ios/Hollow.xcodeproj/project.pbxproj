@@ -13,13 +13,14 @@
 		0000000000000000000000CB /* MessagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000067 /* MessagingView.swift */; };
 		0000000000000000000000CC /* PowerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000068 /* PowerView.swift */; };
 		0000000000000000000000CD /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000069 /* DemoData.swift */; };
+		0000000000000000000A7603 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0000000000000000000A7602 /* Supabase */; };
+		0000000000000000000B742E /* MeshRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A742E /* MeshRouter.swift */; };
+		0000000000000000000B742F /* BluetoothTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A742F /* BluetoothTransport.swift */; };
+		0000000000000000000B7430 /* MessagingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7430 /* MessagingModel.swift */; };
+		0000000000000000000B752E /* AccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A752E /* AccountModel.swift */; };
+		0000000000000000000B752F /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A752F /* AccountView.swift */; };
 		61FCB1D630AF7F7400BA2BAD /* FoodDistributionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FCB1D530AF7F7400BA2BAD /* FoodDistributionView.swift */; };
 		61FCB1D730AF7F7400BA2BAD /* FoodAllocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FCB1D430AF7F7400BA2BAD /* FoodAllocation.swift */; };
-		0000000000000000000B742E /* MeshRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A742E; };
-		0000000000000000000B742F /* BluetoothTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A742F; };
-		0000000000000000000B7430 /* MessagingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A7430; };
-		0000000000000000000B752E /* AccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A752E; };
-		0000000000000000000B752F /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000A752F; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,13 +31,13 @@
 		000000000000000000000067 /* MessagingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessagingView.swift; path = HollowApp/Features/Messaging/MessagingView.swift; sourceTree = "<group>"; };
 		000000000000000000000068 /* PowerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PowerView.swift; path = HollowApp/Features/Power/PowerView.swift; sourceTree = "<group>"; };
 		000000000000000000000069 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DemoData.swift; path = HollowApp/Models/DemoData.swift; sourceTree = "<group>"; };
-		61FCB1D430AF7F7400BA2BAD /* FoodAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodAllocation.swift; sourceTree = "<group>"; };
-		61FCB1D530AF7F7400BA2BAD /* FoodDistributionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodDistributionView.swift; sourceTree = "<group>"; };
 		0000000000000000000A742E /* MeshRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeshRouter.swift; path = HollowApp/Features/Messaging/MeshRouter.swift; sourceTree = "<group>"; };
 		0000000000000000000A742F /* BluetoothTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BluetoothTransport.swift; path = HollowApp/Features/Messaging/BluetoothTransport.swift; sourceTree = "<group>"; };
 		0000000000000000000A7430 /* MessagingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessagingModel.swift; path = HollowApp/Features/Messaging/MessagingModel.swift; sourceTree = "<group>"; };
 		0000000000000000000A752E /* AccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountModel.swift; path = HollowApp/Features/Accounts/AccountModel.swift; sourceTree = "<group>"; };
 		0000000000000000000A752F /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountView.swift; path = HollowApp/Features/Accounts/AccountView.swift; sourceTree = "<group>"; };
+		61FCB1D430AF7F7400BA2BAD /* FoodAllocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodAllocation.swift; sourceTree = "<group>"; };
+		61FCB1D530AF7F7400BA2BAD /* FoodDistributionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodDistributionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0000000000000000000A7603 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +96,9 @@
 			dependencies = (
 			);
 			name = Hollow;
+			packageProductDependencies = (
+				0000000000000000000A7602 /* Supabase */,
+			);
 			productName = Hollow;
 			productReference = 000000000000000000000005 /* Hollow.app */;
 			productType = "com.apple.product-type.application";
@@ -114,6 +119,9 @@
 				Base,
 			);
 			mainGroup = 000000000000000000000003;
+			packageReferences = (
+				0000000000000000000A7601 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			productRefGroup = 000000000000000000000004 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -189,6 +197,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				MARKETING_VERSION = 0.1.0;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hollow.prototype781;
 				PRODUCT_NAME = Hollow;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -208,6 +217,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				MARKETING_VERSION = 0.1.0;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = org.hollow.prototype781;
 				PRODUCT_NAME = Hollow;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -237,6 +247,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0000000000000000000A7601 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.39.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0000000000000000000A7602 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0000000000000000000A7601 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 000000000000000000000001 /* Project object */;
 }

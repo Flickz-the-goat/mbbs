@@ -38,6 +38,11 @@ private struct HollowTabs: View {
             .tag(Tab.account)
             .tabItem { Label("Account", systemImage: "person.crop.circle") }
         }
+        .onOpenURL { url in
+            guard url.scheme == "hollow-auth", url.host == "callback" else { return }
+            tab = .account
+            Task { await account.handleAuthLink(url, deviceID: messaging.address) }
+        }
         .tint(Palette.signal)
         .onChange(of: scenePhase, initial: true) { _, phase in
             if phase == .active {

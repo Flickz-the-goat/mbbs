@@ -2,10 +2,20 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsLocalNetworking</key>
-        <true/>
-    </dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>org.hollow.auth</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>hollow-auth</string>
+            </array>
+        </dict>
+    </array>
+    <key>HollowSupabaseURL</key>
+    <string>https://YOUR_PROJECT_REF.supabase.co</string>
+    <key>HollowSupabasePublishableKey</key>
+    <string>sb_publishable_REPLACE_ME</string>
 </dict>
 </plist>

@@ -1,6 +1,6 @@
 # Hollow — Offline Survival Network
 
-**Status:** The SwiftUI prototype is in `ios/`. The Messages tab implements foreground Bluetooth messaging. The Account tab supports registration, sign-in, and username-based contacts through a FastAPI backend backed by PostgreSQL on Supabase. Power and food integrations below describe planned work.
+**Status:** The SwiftUI prototype is in `ios/`. The Messages tab implements foreground Bluetooth messaging. The Account tab supports registration, sign-in, and username-based contacts directly through Supabase Auth and the Data API. Power and food integrations below describe planned work.
 
 Bluetooth messaging and previously saved contacts work offline. Registration, sign-in, and contact lookup require a reachable backend. Messages and the device ID are stored locally across relaunches. Power shows sample 24-hour forecasts by level, and Food saves private drafts for the current session. Photo capture and review, live forecasts, and pickup assignments are pending.
 
@@ -15,7 +15,7 @@ Hollow is an **iPhone-first** survival coordination application for an undergrou
 | Routing | Custom Swift store-and-forward mesh protocol |
 | Local storage | SwiftData for the message history, relay queue, and device ID |
 | Backend HTTP API | **Python 3.11+ / FastAPI / Pydantic** |
-| Database | Supabase-hosted PostgreSQL + SQLAlchemy + Alembic |
+| Database | Supabase Auth and PostgreSQL for accounts; SQLAlchemy and Alembic for the optional Python backend |
 | Outage forecasting | pandas, NumPy, scikit-learn |
 | Food allocation | Python, SciPy optimization |
 | Photo review | Vision-capable model accessed by FastAPI; human review for uncertainty |
@@ -28,7 +28,9 @@ Hollow is an **iPhone-first** survival coordination application for an undergrou
 ```mermaid
 flowchart TD
     subgraph iPhone[SwiftUI iPhone App]
-        UI[Messaging / Power / Food Screens]
+        UI[Account / Messaging / Power / Food Screens]
+        Accounts[Supabase Swift SDK]
+        UI --> Accounts
         Local[Local Persistence + Outbox]
         BLE[CoreBluetooth Transport]
         Router[Swift Mesh Router]
@@ -38,6 +40,7 @@ flowchart TD
         Router <--> BLE
         UI --> API
     end
+    Accounts <-->|HTTPS| Supabase[Supabase Auth and Data API]
     BLE <-->|BLE GATT, app active| Peers[Nearby iPhones]
     API <-->|HTTP when server reachable| FastAPI[Python FastAPI]
     FastAPI --> Forecast[scikit-learn Outage Model]
@@ -141,25 +144,22 @@ hollow/
 
 ## Local development
 
-### Account backend with Supabase
+### Supabase account setup
 
-1. In your Supabase project, open **Connect** and copy the **Session Pooler** PostgreSQL URI. Set it as `DATABASE_URL` in the root `.env`. Use the `postgresql+psycopg://` scheme, URL-encode the password, and include `?sslmode=require`. The local `.env` is ignored by Git. Use the tracked [example](.env.example) for a fresh checkout.
-2. From the repository root, install dependencies, run the schema migration, and start the API. These commands use macOS shell syntax.
+1. Run [db.sql](db.sql) in the Supabase SQL Editor. It creates profile and contact tables, row-level security policies, and authenticated contact RPCs. Supabase Auth manages its own users and sessions.
+2. Enable the **Email** provider and allow new users to sign up in Supabase Authentication. Keep **Confirm email** enabled for verified accounts.
+3. Under **Authentication → URL Configuration → Redirect URLs**, add `hollow-auth://callback/confirm` and `hollow-auth://callback/recover`. Use the standard confirmation and recovery email templates. Open the email links on the device that requested them. For email delivery outside Supabase's test sender restrictions, configure custom SMTP.
+4. Set `HollowSupabaseURL` and `HollowSupabasePublishableKey` in [ios/HollowApp/Info.plist](ios/HollowApp/Info.plist) to the project's HTTPS URL and `sb_publishable_…` key. Xcode fetches the pinned Supabase Swift package when you open the project.
+5. Run Hollow, open **Account**, and choose **Create an account**. Sign up with an email and password, confirm the email, and save a username, name, and level. Each profile is linked to the device's local Bluetooth address. Use separate accounts for separate demo phones.
+6. Enter another resident's username under **Contacts**. Tap a saved contact to address a Bluetooth message. The app caches the profile and contacts for offline use and clears them on sign-out.
 
-   ```sh
-   python3 -m venv .venv
-   source .venv/bin/activate
-   python -m pip install -r backend/requirements.txt
-   alembic -c backend/alembic.ini upgrade head
-   uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
-   ```
-3. An iPhone simulator on the same Mac can use `http://localhost:8000`. To share the backend across physical phones, deploy FastAPI behind a reachable HTTPS URL and set the same `DATABASE_URL` in the host environment. Run the migration against that database, and enter the same FastAPI URL on each phone. The iOS app connects to FastAPI. Supabase database credentials stay on the backend.
-4. In the **Account** tab choose **Create an account** and enter a username, name, password of at least eight characters, and Hollow level. Hollow fills in its local Bluetooth device ID. Each account is currently tied to a single device ID, so create separate accounts for separate phones. Passwords are stored as salted hashes.
-5. Enter another resident’s username under **Contacts**, then tap the saved contact to address a Bluetooth message. Saved contacts remain available offline on the signed-in phone. Registration and updating contacts require HTTP access to FastAPI.
+The iPhone account flow needs only Supabase HTTPS access. Existing accounts from the earlier Python prototype need to register with Supabase Auth and create their profiles again.
 
-The migration creates `hollow_users`, `hollow_sessions`, and `hollow_contacts` with PostgreSQL row-level security enabled. The backend connects with the database owner role for this prototype. The app does not use Supabase Auth or keep a Supabase credential.
+The database regression checks in [db.tests.sql](db.tests.sql) can be run in the SQL Editor after applying the schema. The fixture rows are rolled back.
 
-Run account API tests locally with a temporary SQLite database.
+### Optional Python backend tests
+
+Run the existing FastAPI account tests locally with a temporary SQLite database.
 
 ```sh
 python -m pip install -r backend/requirements-dev.txt
@@ -168,7 +168,7 @@ PYTHONPATH=backend python -m pytest -q backend/tests
 
 ### iPhone app (macOS required)
 
-1. On a Mac with Xcode 15 or later, open [Hollow.xcodeproj](ios/Hollow.xcodeproj).
+1. On a Mac with Xcode with Swift 6.4 or later (required by the resolved Swift packages), open [Hollow.xcodeproj](ios/Hollow.xcodeproj).
 2. Select the **Hollow** scheme and an iPhone simulator running iOS 17 or later. Press Run.
 3. For a physical iPhone, select a development team under **Signing & Capabilities**, select the phone as the run destination, then press Run.
 
