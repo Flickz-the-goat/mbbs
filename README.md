@@ -55,6 +55,8 @@ flowchart TD
 
 ### 1. Nearby messaging
 
+The Messages tab lists saved contacts and existing conversations. Open a row to see that device’s chat, or use the compose button to start a conversation by device ID.
+
 - Each foreground iPhone advertises and scans. Peers write chunks with an ATT response to service `742D0001-CCB4-4D28-AE1E-0AA2AAEBE301`, characteristic `742D0002-CCB4-4D28-AE1E-0AA2AAEBE301`. A one-byte flags header marks the first and last chunks. The assembled Codable JSON packet is limited to 4 KiB, with text capped at 240 characters and 960 UTF-8 bytes.
 - Messages and acknowledgments have a version, unique ID, origin, destination, creation time, remaining hop allowance, and hop count. Relays store and forward packets that are under 24 hours old and have hops remaining. New packets can cross up to twelve links. Install the updated build on all devices in the relay chain. The updated app can still relay legacy four-link packets. Duplicate messages display once.
 - SwiftData stores the on-device history, received acknowledgments, and pending packets. **Queued** means the message is waiting for a peer. **Sent to peer** reflects an accepted Bluetooth write during the current run. **Delivered** requires an acknowledgment addressed to the sender from the destination ID. **Expired** means the forwarding window elapsed without a receipt.
@@ -175,7 +177,7 @@ PYTHONPATH=backend python -m pytest -q backend/tests
 ### Bluetooth demo
 
 1. Install the app on two physical iPhones, grant Bluetooth permission, and keep both apps in the foreground.
-2. Open **Messages** on each phone. Copy or share the recipient’s device ID and paste it into the sender’s **Recipient device ID** field.
+2. Open **Messages** on each phone. Copy or share the recipient’s device ID and tap the sender’s compose button, and paste it into **Recipient device ID**.
 3. Turn off Wi-Fi and cellular data while keeping Bluetooth enabled. Send a short message and check that it appears on the recipient and becomes **Delivered** on the sender.
 4. For a physical relay check, use a third iPhone. Keep sender and recipient out of direct Bluetooth reach. Let the middle device receive from the sender, then take it into the recipient’s range. Return it to the sender’s range to forward the receipt. Keep the apps foregrounded throughout.
 

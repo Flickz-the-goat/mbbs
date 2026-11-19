@@ -15,14 +15,14 @@ private struct HollowTabs: View {
     @StateObject private var messaging = MessagingModel()
     @StateObject private var account = AccountModel()
     @State private var tab = Tab.account
-    @State private var recipient = ""
+    @State private var conversations: [UUID] = []
     @State private var drafts: [FoodDraft] = []
 
     private enum Tab { case account, messages, power, food }
 
     var body: some View {
         TabView(selection: $tab) {
-            MessagingView(model: messaging, recipient: $recipient)
+            MessagingView(model: messaging, contacts: account.contacts, path: $conversations)
                 .tag(Tab.messages)
                 .tabItem { Label("Messages", systemImage: "bubble.left.and.bubble.right") }
             PowerView()
@@ -32,7 +32,7 @@ private struct HollowTabs: View {
                 .tag(Tab.food)
                 .tabItem { Label("Food", systemImage: "shippingbox") }
             AccountView(model: account, deviceID: messaging.address) { id in
-                recipient = id.uuidString
+                conversations = [id]
                 tab = .messages
             }
             .tag(Tab.account)
