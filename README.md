@@ -1,4 +1,4 @@
-# Hollow — Offline Survival Network
+# MBBS — Offline Survival Network
 
 **Status:** The SwiftUI prototype is in `ios/`. The Messages tab implements foreground Bluetooth messaging. The Account tab supports registration, sign-in, and username-based contacts directly through Supabase Auth and the Data API. The Food tab shows a read-only demo pickup window and ration quantities for each resident. The Power tab requests a 24-hour outage forecast for the selected level and shows the server's synthetic replay window.
 
@@ -6,7 +6,7 @@ Bluetooth messaging and previously saved contacts work offline. Registration, si
 
 The **Blackout** tab combines family check-ins, resident incident reports, and outage estimates.
 
-Hollow is an **iPhone-first** survival coordination application for an underground civilization with unreliable power, scarce food, and disrupted connectivity. It combines (1) nearby device-to-device messaging, (2) level-specific power outage forecasting, and (3) food inventory, allocation, and pickup scheduling.
+MBBS is an **iPhone-first** survival coordination application for an underground civilization with unreliable power, scarce food, and disrupted connectivity. It combines (1) nearby device-to-device messaging, (2) level-specific power outage forecasting, and (3) food inventory, allocation, and pickup scheduling.
 
 ## Technology
 
@@ -68,7 +68,7 @@ The Messages tab lists saved contacts and existing conversations. Open a row to 
 
 The backend uses timestamped electrical demand, capacity, and historical outage starts for synthetic levels 2–4. A scikit-learn histogram gradient boosting classifier estimates the probability of at least one outage starting in the 24 hours after the latest input reading. Its inputs include load relative to capacity, the recent change in that ratio, level, and time of day.
 
-Use `GET /api/v1/levels/{level_id}/power/forecast` to replay the bundled sample, `POST` at that path to estimate risk from two submitted readings, and `GET /api/v1/power/model` for held-out evaluation. Model setup and request fields are in the [backend README](backend/hollow-food/README.md). Forecasts are synthetic demonstrations. Outage duration and exact start times are outside this model's output.
+Use `GET /api/v1/levels/{level_id}/power/forecast` to replay the bundled sample, `POST` at that path to estimate risk from two submitted readings, and `GET /api/v1/power/model` for held-out evaluation. Model setup and request fields are in the [backend README](backend/MBBS-food/README.md). Forecasts are synthetic demonstrations. Outage duration and exact start times are outside this model's output.
 
 ### 3. Food inventory and ration distribution
 
@@ -115,9 +115,9 @@ Persist timestamps in UTC, use stable IDs, explicit quantity units, audit trails
 ## Suggested repository layout
 
 ```text
-hollow/
+MBBS/
 ├── ios/                         # Xcode SwiftUI project
-│   ├── HollowApp/
+│   ├── MBBSApp/
 │   │   ├── App/
 │   │   ├── Features/Messaging/
 │   │   ├── Features/Power/
@@ -125,7 +125,7 @@ hollow/
 │   │   ├── Networking/
 │   │   ├── Persistence/
 │   │   └── Models/
-│   └── HollowAppTests/
+│   └── MBBSAppTests/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py
@@ -148,9 +148,9 @@ hollow/
 
 1. Run [db.sql](db.sql) in the Supabase SQL Editor. It creates profile and contact tables, row-level security policies, and authenticated contact RPCs. Supabase Auth manages its own users and sessions.
 2. Enable the **Email** provider and allow new users to sign up in Supabase Authentication. Keep **Confirm email** enabled for verified accounts.
-3. Under **Authentication → URL Configuration → Redirect URLs**, add `hollow-auth://callback/confirm` and `hollow-auth://callback/recover`. Use the standard confirmation and recovery email templates. Open the email links on the device that requested them. For email delivery outside Supabase's test sender restrictions, configure custom SMTP.
-4. Set `HollowSupabaseURL` and `HollowSupabasePublishableKey` in [ios/HollowApp/Info.plist](ios/HollowApp/Info.plist) to the project's HTTPS URL and `sb_publishable_…` key. Xcode fetches the pinned Supabase Swift package when you open the project.
-5. Run Hollow, open **Account**, and choose **Create an account**. Sign up with an email and password, confirm the email, and save a username, name, and level. Each profile is linked to the device's local Bluetooth address. Use separate accounts for separate demo phones.
+3. Under **Authentication → URL Configuration → Redirect URLs**, add `MBBS-auth://callback/confirm` and `MBBS-auth://callback/recover`. Use the standard confirmation and recovery email templates. Open the email links on the device that requested them. For email delivery outside Supabase's test sender restrictions, configure custom SMTP.
+4. Set `MBBSSupabaseURL` and `MBBSSupabasePublishableKey` in [ios/MBBSApp/Info.plist](ios/MBBSApp/Info.plist) to the project's HTTPS URL and `sb_publishable_…` key. Xcode fetches the pinned Supabase Swift package when you open the project.
+5. Run MBBS, open **Account**, and choose **Create an account**. Sign up with an email and password, confirm the email, and save a username, name, and level. Each profile is linked to the device's local Bluetooth address. Use separate accounts for separate demo phones.
 6. Enter another resident's username under **Contacts**. Tap a saved contact to address a Bluetooth message. The app caches the profile and contacts for offline use and clears them on sign-out.
 
 The iPhone account flow needs only Supabase HTTPS access. Existing accounts from the earlier Python prototype need to register with Supabase Auth and create their profiles again.
@@ -162,27 +162,27 @@ The database regression checks in [db.tests.sql](db.tests.sql) can be run in the
 Run the FastAPI service locally with Python 3.11 or later. It runs independently of the iPhone app and Supabase.
 
 ```sh
-cd backend/hollow-food
+cd backend/MBBS-food
 python -m pip install -r requirements.txt
 python -m power.train
 python -m unittest discover -s tests
 python -m uvicorn api:app --reload
 ```
 
-Open `http://127.0.0.1:8000/docs` for `POST /food/predict-demand` and `POST /food/allocate`. See the [food backend README](backend/hollow-food/README.md) for model regeneration and input limits.
+Open `http://127.0.0.1:8000/docs` for `POST /food/predict-demand` and `POST /food/allocate`. See the [food backend README](backend/MBBS-food/README.md) for model regeneration and input limits.
 
-To connect the iPhone app, set `HollowAPIURL` in [Info.plist](ios/HollowApp/Info.plist) to the base URL, then rebuild and open **Power**. Existing builds configured through `HollowFoodAPIURL` can retain that key as a fallback when `HollowAPIURL` is blank. Use `http://localhost:8000` for a simulator on the same Mac as the server. For a physical phone, use a reachable HTTPS endpoint with a trusted certificate, or run `python -m uvicorn api:app --host 0.0.0.0` on a trusted local network and use the server’s resolvable `.local` hostname, such as `http://hollow-host.local:8000`. Allow local network access if iOS prompts.
+To connect the iPhone app, set `MBBSAPIURL` in [Info.plist](ios/MBBSApp/Info.plist) to the base URL, then rebuild and open **Power**. Existing builds configured through `MBBSFoodAPIURL` can retain that key as a fallback when `MBBSAPIURL` is blank. Use `http://localhost:8000` for a simulator on the same Mac as the server. For a physical phone, use a reachable HTTPS endpoint with a trusted certificate, or run `python -m uvicorn api:app --host 0.0.0.0` on a trusted local network and use the server’s resolvable `.local` hostname, such as `http://MBBS-host.local:8000`. Allow local network access if iOS prompts.
 
 Power displays the probability and dated forecast window from the server. The demo replays the latest bundled readings, so the displayed window is historical. Train the model before starting the server with the command above.
 
-The current demo configuration points to `http://MacBook-Air-156.local:8000`. Start Uvicorn with `--host 0.0.0.0` to serve that address. If you run the backend on another Mac, update `HollowAPIURL` before rebuilding.
+The current demo configuration points to `http://MacBook-Air-156.local:8000`. Start Uvicorn with `--host 0.0.0.0` to serve that address. If you run the backend on another Mac, update `MBBSAPIURL` before rebuilding.
 
 Try the food prediction and allocation endpoints in the FastAPI docs with synthetic demo data.
 
 ### iPhone app (macOS required)
 
-1. On a Mac with Xcode with Swift 6.4 or later (required by the resolved Swift packages), open [Hollow.xcodeproj](ios/Hollow.xcodeproj).
-2. Select the **Hollow** scheme and an iPhone simulator running iOS 17 or later. Press Run.
+1. On a Mac with Xcode with Swift 6.4 or later (required by the resolved Swift packages), open [MBBS.xcodeproj](ios/MBBS.xcodeproj).
+2. Select the **MBBS** scheme and an iPhone simulator running iOS 17 or later. Press Run.
 3. For a physical iPhone, select a development team under **Signing & Capabilities**, select the phone as the run destination, then press Run.
 
 ### Bluetooth demo
@@ -207,15 +207,15 @@ Open **Food** to see a resident’s pickup window and ration quantities. The sam
 The Foundation-only checks run on a Mac with Swift command-line tools. The three-device transport in these checks is a simulation and exercises routing, queue reload, disconnect and reconnect, duplicate suppression, expiry, and acknowledgments.
 
 ```sh
-hollow_test_dir=$(mktemp -d)
-swiftc -module-cache-path "$hollow_test_dir/cache" \
-  ios/HollowApp/Models/DemoData.swift \
-  ios/HollowApp/Features/Messaging/MeshRouter.swift \
-  ios/HollowApp/Networking/PowerAPIClient.swift \
-  ios/HollowApp/Features/Blackout/BlackoutMessages.swift \
-  ios/HollowApp/Features/Blackout/BlackoutPlanner.swift \
-  ios/Tests/main.swift -o "$hollow_test_dir/hollow-tests"
-"$hollow_test_dir/hollow-tests"
+MBBS_test_dir=$(mktemp -d)
+swiftc -module-cache-path "$MBBS_test_dir/cache" \
+  ios/MBBSApp/Models/DemoData.swift \
+  ios/MBBSApp/Features/Messaging/MeshRouter.swift \
+  ios/MBBSApp/Networking/PowerAPIClient.swift \
+  ios/MBBSApp/Features/Blackout/BlackoutMessages.swift \
+  ios/MBBSApp/Features/Blackout/BlackoutPlanner.swift \
+  ios/Tests/main.swift -o "$MBBS_test_dir/MBBS-tests"
+"$MBBS_test_dir/MBBS-tests"
 ```
 
 ## Seven-day hackathon scope
